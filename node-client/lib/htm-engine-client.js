@@ -18,8 +18,8 @@ function HtmEngineClient(url) {
  * @param callback [function] might be sent error
  */
 HtmEngineClient.prototype.postData = function(id, value, timestamp, callback) {
-    var url = this.url + '/' + id,
-        body = value + ' ' + timestamp;
+    var url = this.url + '/event/' + id,
+        body = {"value": value, "timestamp": timestamp};
     request.post(url, {
         body: body
     }, callback);
@@ -34,11 +34,11 @@ HtmEngineClient.prototype.postData = function(id, value, timestamp, callback) {
  * @param callback
  */
 HtmEngineClient.prototype.createModel = function(id, min, max, callback) {
-    var url = this.url + '/' + id;
+    var url = this.url + '/create/' + id;
     console.log('Creating model %s...', id);
     request({
         url: url,
-        method: 'PUT',
+        method: 'POST',
         json: {
             min: min,
             max: max
@@ -52,9 +52,9 @@ HtmEngineClient.prototype.createModel = function(id, min, max, callback) {
  * @param callback [function] called with (err, rows)
  */
 HtmEngineClient.prototype.getData = function(id, callback) {
-    var url = this.url + '/' + id;
-    request.get(url, function(err, response, body) {
-        var rows;
+    var url = this.url + '/getData' + id;
+    request.post(url, function(err, response, body) {
+/*        var rows;
         if (err) return callback(err);
         if (!body) {
             return callback(null, []);
@@ -74,8 +74,8 @@ HtmEngineClient.prototype.getData = function(id, callback) {
                 timestamp: timestamp,
                 anomaly: anomalyScore
             };
-        });
-        callback(null, rows);
+        });*/
+        callback(null, response.data);
     });
 };
 
