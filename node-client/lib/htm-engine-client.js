@@ -18,11 +18,20 @@ function HtmEngineClient(url) {
  * @param callback [function] might be sent error
  */
 HtmEngineClient.prototype.postData = function(id, value, timestamp, callback) {
-    var url = this.url + '/event/' + id,
-        body = {"value": value, "timestamp": timestamp};
-    request.post(url, {
-        body: body
-    }, callback);
+
+  var convertDate = function(inputFormat) {
+    function pad(s) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat*1000);
+    return [pad(d.getMonth()+1), pad(d.getDate()), d.getFullYear().toString().substr(2,2)].join('/') + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  };
+
+  var url = this.url + '/event/' + id,
+    body = {"value": value, "timestamp": convertDate(timestamp)};
+	request({
+      url: url,
+      method: 'POST',
+      json: body
+		}, callback);
 };
 
 /**
@@ -52,31 +61,16 @@ HtmEngineClient.prototype.createModel = function(id, min, max, callback) {
  * @param callback [function] called with (err, rows)
  */
 HtmEngineClient.prototype.getData = function(id, callback) {
-    var url = this.url + '/getData' + id;
-    request.post(url, function(err, response, body) {
-/*        var rows;
-        if (err) return callback(err);
-        if (!body) {
-            return callback(null, []);
-        }
-        rows = _.map(_.trim(body).split('\n'), function(rowString) {
-            var pieces = rowString.split(/\s+/),
-                value = Number(pieces[1]),
-                timestamp = parseInt(pieces[2]),
-                anomalyScore = pieces[3];
-            if (anomalyScore == 'None') {
-                anomalyScore = undefined;
-            } else {
-                anomalyScore = Number(anomalyScore);
-            }
-            return {
-                value: value,
-                timestamp: timestamp,
-                anomaly: anomalyScore
-            };
-        });*/
-        callback(null, response.data);
-    });
+  var url = this.url + '/getData/' + id;
+
+  request({
+    url: url,
+    method: 'POST',
+    json: {}
+  }, function(err, response, body) {
+    console.log(response);
+    callback(null, response.body.data);
+  });
 };
 
 /**
