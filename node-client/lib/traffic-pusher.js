@@ -158,7 +158,7 @@ TrafficPusher.prototype.fetch = function(callback) {
                                     'Speed')],
                                 timestamp = dateStringToMomentWithZone(
                                     timeString, TZ).unix();
-                            me.htmEngineClient.postData(
+                            me.htmEngineClient.postBulkData(
                                 id, speed, timestamp, htmCallback
                             );
                         });

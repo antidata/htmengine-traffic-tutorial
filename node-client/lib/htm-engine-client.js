@@ -28,6 +28,25 @@ HtmEngineClient.prototype.postData = function(id, value, timestamp, callback) {
   var url = this.url + '/event/' + id,
     body = {"value": value, "timestamp": convertDate(timestamp)};
 	request({
+
+      url: url,
+      method: 'POST',
+      json: body
+		}, callback);
+};
+
+HtmEngineClient.prototype.postBulkData = function(id, value, timestamp, callback) {
+
+  var convertDate = function(inputFormat) {
+    function pad(s) { return (s < 10) ? '0' + s : s; }
+    var d = new Date(inputFormat*1000);
+    return [pad(d.getMonth()+1), pad(d.getDate()), d.getFullYear().toString().substr(2,2)].join('/') + " " + pad(d.getHours()) + ":" + pad(d.getMinutes());
+  };
+
+  var url = this.url + '/bulkEvent/' + id,
+    body = {"value": value, "timestamp": convertDate(timestamp)};
+	request({
+
       url: url,
       method: 'POST',
       json: body
